@@ -5,7 +5,7 @@
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 import time
-from uuid import uuid64
+from uuid import uuid4
 import base64
 from flask import Flask, jsonify
 import jwt
