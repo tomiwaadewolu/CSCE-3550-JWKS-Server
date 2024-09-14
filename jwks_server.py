@@ -173,8 +173,8 @@ def verify_token():
     except jwt.InvalidTokenError:
         return jsonify({'error': 'Invalid token'}), 401
 
-#running the server on flask
+#running the server on flask at port 8080
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=8080)
 
 #Source: https://chatgpt.com/c/66df21d9-b94c-800e-9eba-6f2130cde693
