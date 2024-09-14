@@ -73,7 +73,7 @@ def jwks():
         jwks_keys.append({
             'kid': kid, #key id
             'kty': 'RSA', #key type
-            'use': sig, #use of key (for signing operations)
+            'use': 'sig', #use of key (for signing operations)
             'alg': 'RS256', #algorithm
             'n': base64.urlsafe_b64encode(public_numbers.n.to_bytes(256, 'big')).decode('utf-8').rstrip('='), #modulus
             'e': base64.urlsafe_b64encode(public_numbers.e.to_bytes(3, 'big')).decode('utf-8').rstrip('=') #exponent
