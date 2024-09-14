@@ -114,7 +114,7 @@ def issue_token():
     #set keys to use found key
     kid, key_data = key_to_use
     payload = {
-        'user_id': '12345' #example id
+        'user_id': '12345', #example id
         'exp': time.time() + 3600 #expires after 1 hour
     }
 
@@ -174,7 +174,7 @@ def verify_token():
         return jsonify({'error': 'Invalid token'}), 401
 
 #running the server on flask
-if __name__ = "__main__":
+if __name__ == "__main__":
     app.run(debug=True)
 
 #Source: https://chatgpt.com/c/66df21d9-b94c-800e-9eba-6f2130cde693
