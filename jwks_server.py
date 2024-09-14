@@ -41,7 +41,7 @@ keys = {}
 #function to add new key with unique kid and expiration time
 def add_key():
     private_pem, public_pem = get_key_pair() #getting RSA key pair
-    kid = str(uuid()) #creating id for new key
+    kid = str(uuid4()) #creating id for new key
     expiry_time = time.time() + 86400 #making key expire in 24 hours
 
     #setting members of new key
