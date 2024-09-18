@@ -1,6 +1,7 @@
 #Name: Ireoluwatomiwa Adewolu
 #CSCE 3550.001
 #Generating RSA Pair Keys
+#Building JWKS Server
 
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
@@ -162,6 +163,8 @@ def load_public_key(pem_data):
 #function to verify jwts based on the kid in the jwt header
 def verify_token():
     token = request.json.get('token')
+    if not token:
+        return jsonify({'error': 'Token not provided'}), 400
 
     #decoding token header to get kid
     unverified_header = jwt.get_unverified_header(token)
@@ -190,6 +193,53 @@ def verify_token():
     #handling error case for a valid token that is not found
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+#funtion to extract jwt from header with request object as parameter
+def extract_jwt_from_header(request):
+    #checking if the header exists
+    auth_header = request.headers.get('Authorization')
+    
+    #if the header has a value, extract the token, else return None
+    if auth_header:
+        #remove spaces from header
+        token = auth_header.split(" ")[1] if " " in auth_header else auth_header
+        return token
+    return None
+
+#making URL path for the app route to use for HTTP POST requests to /verify_with_header
+@app.route('/verify_with_header', methods=['POST'])
+
+#function to verify jwts that need to be extraxted from header 
+def verify_token_with_header():
+    #extracting the jwt
+    token = extract_jwt_from_header(request)
+
+    #returning error if token is not found in header
+    if not token:
+        return jsonify({'error': 'Token not provided in Authorization header'}), 400
+    
+    #calling the verify_token function
+    return verify_token()
+
+#making URL path for the app route to use for HTTP POST requests to /auth
+@app.route('/auth', methods=['POST'])
+
+#function for authenticating
+def auth():
+    #returning jwt
+    return jsonify({'message': 'Authentication endpoint'}), 200
+
+#making URL path for the app route to use for HTTP POST requests to /.well-known/jwks.json
+@app.route('/.well-known/jwks.json', methods=['GET'])
+
+#function for redirecting jwks
+def jwks_redirect():
+    return jwks()
+
+#function for handling unsupported methods
+@app.errorhandler(405)
+def method_not_allowed(e):
+    return jsonify({'error': 'Method not allowed'}), 405
 
 #running the server on flask at port 8080
 if __name__ == "__main__":
