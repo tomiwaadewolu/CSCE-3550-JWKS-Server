@@ -36,8 +36,10 @@ def get_key_pair():
     #return private and public PEMs
     return private_pem, public_pem
 
-keys = {} #defining array of keys
-key_lock = threading.Lock() #lock for threads
+keys = {} #defining dictionary of keys
+key_lock = threading.Lock() #lock for key thread operations
+tokens = {} #defining dictionary of tokens
+token_lock = threading.Lock() #lock for token thread operations
 
 #function to add new key with unique kid and expiration time
 def add_key():
@@ -130,6 +132,10 @@ def issue_token():
     private_key = load_private_key(key_data['private_key'])
     token = jwt.encode(payload, private_key, algorithm='RS256', headers={'kid': kid})
 
+    #storing the jwt and its expiry time
+    with token_lock:
+        tokens[token] = payload['exp']
+
     #return jwt in JSON format
     return jsonify({'token': token})
 
@@ -139,6 +145,7 @@ def rotate_keys():
         #keys rotate hourly
         time.sleep(3600)
 
+        #deleting expired keys
         with key_lock:
             current_time = time.time()
 
@@ -149,6 +156,12 @@ def rotate_keys():
 
             #add new keys
             add_key()
+
+        #deleting expired jwts
+        with token_lock:
+            expired_tokens = [token for token, exp in tokens.items() if exp < current_time]
+            for token in expired_tokens:
+                del tokens[token]
 
 #rotate keys in background
 threading.Thread(target=rotate_keys, daemon=True).start()
@@ -166,9 +179,14 @@ def verify_token():
     if not token:
         return jsonify({'error': 'Token not provided'}), 400
 
-    #decoding token header to get kid
-    unverified_header = jwt.get_unverified_header(token)
-    kid = unverified_header['kid']
+    try:
+        #decoding token header to get kid
+        unverified_header = jwt.get_unverified_header(token)
+        kid = unverified_header['kid']
+
+    #handling error if token is not in header
+    except Exception as e:
+        return jsonify({'error': 'Token not provided'}), 400
 
     #checking for kid's public key
     if kid not in keys:
