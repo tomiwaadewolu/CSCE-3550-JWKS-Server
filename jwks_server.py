@@ -89,8 +89,8 @@ def jwks():
 def load_private_key(pem_data):
     return serialization.load_pem_private_key(pem_data, password=None)
 
-#making URL path for the app route to use for HTTP POST requests to /token
-@app.route('/token', methods=['POST'])
+#making URL path for the app route to use for HTTP POST requests to /auth
+@app.route('/auth', methods=['POST'])
 
 #function for issueing jwts in response to a HTTP POST request at the /token endpoint
 def issue_token():
@@ -123,7 +123,7 @@ def issue_token():
     kid, key_data = key_to_use
     payload = {
         'user_id': '12345', #example id
-        'exp': time.time() + 3600 #expires after 1 hour
+        'exp': time.time() + (3600 if not use_expired_key else -3600) #expires after 1 hour or already expired
     }
 
     #encoding jwt using private key
@@ -221,13 +221,12 @@ def verify_token_with_header():
     #calling the verify_token function
     return verify_token()
 
-#making URL path for the app route to use for HTTP POST requests to /auth
-@app.route('/auth', methods=['POST'])
+#making path for 405 errors
+@app.errorhandler(405)
 
-#function for authenticating
-def auth():
-    #returning jwt
-    return jsonify({'message': 'Authentication endpoint'}), 200
+#function for handling unsupported methods
+def method_not_allowed(e):
+    return jsonify({'error': 'Method not allowed'}), 405
 
 #making URL path for the app route to use for HTTP POST requests to /.well-known/jwks.json
 @app.route('/.well-known/jwks.json', methods=['GET'])
@@ -235,11 +234,6 @@ def auth():
 #function for redirecting jwks
 def jwks_redirect():
     return jwks()
-
-#function for handling unsupported methods
-@app.errorhandler(405)
-def method_not_allowed(e):
-    return jsonify({'error': 'Method not allowed'}), 405
 
 #running the server on flask at port 8080
 if __name__ == "__main__":
