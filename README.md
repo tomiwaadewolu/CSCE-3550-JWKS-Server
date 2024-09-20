@@ -1,5 +1,7 @@
 # CSCE-3550-JWKS-Server
 
+The code here implements a RESTful JWKS server that provides public keys with unique identifiers (kid) for verifying JSON Web Tokens (JWTs), implements key expiry for enhanced security, includes an authentication endpoint, and handles the issuance of JWTs with expired keys based on a query parameter. It is implemented in Python and is a web server with two handlers and properly generates keys.
+
 ## Steps to making a RESTful JWKS Server
 1. Set up the Development Environment (Flask for Python)
 2. Generate RSA Pair Keys
