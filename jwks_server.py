@@ -94,7 +94,7 @@ def load_private_key(pem_data):
 #making URL path for the app route to use for HTTP POST requests to /auth
 @app.route('/auth', methods=['POST'])
 
-#function for issueing jwts in response to a HTTP POST request at the /token endpoint
+#function for issueing jwts in response to a HTTP POST request at the /auth endpoint
 def issue_token():
     #bool for checking to use an expired key
     use_expired_key = request.args.get('useExpiredKey', 'false').lower() == 'true'
@@ -227,7 +227,7 @@ def extract_jwt_from_header(request):
 #making URL path for the app route to use for HTTP POST requests to /verify_with_header
 @app.route('/verify_with_header', methods=['POST'])
 
-#function to verify jwts that need to be extraxted from header 
+#function to verify jwts that need to be extracted from header 
 def verify_token_with_header():
     #extracting the jwt
     token = extract_jwt_from_header(request)
