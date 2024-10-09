@@ -11,9 +11,22 @@ import base64
 import jwt
 import datetime
 import uuid
+import sqlite3
 
 #making an instance (app) of Flask class
 app = Flask(__name__)
+
+#making an instance of database
+DB_FILE = 'totally_not_my_privateKeys.db'
+
+#creating SQLite table
+CREATE_KEYS_TABLE = """
+    CREATE TABLE IF NOT EXISTS keys(
+        kid INTEGER PRIMARY KEY AUTOINCREMENT,
+        key BLOB NOT NULL,
+        exp INTEGER NOT NULL
+    )
+"""
 
 #getting private key
 private_key = rsa.generate_private_key(
