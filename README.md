@@ -17,7 +17,7 @@ The code here implements a RESTful JWKS server that provides public keys with un
 1. Open a command line interface of your choice
 2. Navigate to the folder with the server
 3. Make sure Python is installed
-4. To use a virtual environment (optional):
+4. To use a virtual environment:
    
 	a. Enter "python -m venv venv"
 
