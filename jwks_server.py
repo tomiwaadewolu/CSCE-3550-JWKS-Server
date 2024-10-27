@@ -45,14 +45,31 @@ pem = private_key.private_bytes(
     encoding=serialization.Encoding.PEM, #key is encoded using PEM
     format=serialization.PrivateFormat.TraditionalOpenSSL, #key is formatted using TraditionalOpenSSL
     encryption_algorithm=serialization.NoEncryption() #key is not encrypted
-)
+).decode('utf-8')
 
 #PEM encoded version of expired key
 expired_pem = expired_key.private_bytes(
     encoding=serialization.Encoding.PEM, #key is encoded using PEM
     format=serialization.PrivateFormat.TraditionalOpenSSL, #key is formatted using TraditionalOpenSSL
     encryption_algorithm=serialization.NoEncryption() #key is not encrypted
-)
+).decode('utf-8')
+
+#initialize the SQLite database
+def init_db():
+    with sqlite3.connect(DB_FILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute(CREATE_KEYS_TABLE)
+
+        # Insert the valid private key
+        exp_time_valid = int((datetime.datetime.utcnow() + datetime.timedelta(hours=1)).timestamp())
+        cursor.execute("INSERT INTO keys (key, exp) VALUES (?, ?)", (pem, exp_time_valid))
+
+        # Insert the expired private key
+        exp_time_expired = int((datetime.datetime.utcnow() - datetime.timedelta(hours=1)).timestamp())
+        cursor.execute("INSERT INTO keys (key, exp) VALUES (?, ?)", (expired_pem, exp_time_expired))
+
+        conn.commit()
+
 
 #convert RSA numbers to Base64URL-encoded string
 def int_to_base64(value):
