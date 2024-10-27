@@ -22,7 +22,7 @@ The code here implements a RESTful JWKS server that provides public keys with un
 	a. Enter "python -m venv venv"
 
 	b. Enter "venv\Scripts\activate"
-5. Enter "pip install requests pyjwt cryptography" to install headers used
+5. Enter "pip install requests pyjwt cryptography" to install modules used
 6. Start the server by running "python jwks_server.py"
 7. Keep the server running while starting the test client
 
@@ -33,5 +33,10 @@ Test Client: https://github.com/jh125486/CSCE3550/releases
 2. Open a different window of the command line interface
 3. Navigate to the folder with the gradebot
    
-4. Run "gradebot project1"
+4. Run "gradebot project2"
 
+## Steps to Running the Test Suite
+1. Enter "pip install pytest pytest-cov requests" to modules headers used
+   
+2. Enter "pytest test_suite/" to run the test suite
+3. Enter "pytest --cov=jwks_server --cov-report=term-missing" to show the test coverage percentage
