@@ -1,14 +1,19 @@
+#Name: Ireoluwatomiwa Adewolu
+#euid: ija0023
+#CSCE 3550.001
+#Generating RSA Pair Keys
+#Building Test Suite for JWKS Server
 import pytest
 import sqlite3
 import datetime
 from jwks_server import app, DB_FILE, init_db
 
-# Set up test client
+#set up test client
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
     with app.test_client() as client:
-        init_db()  # Reinitialize database for each test
+        init_db()  #initialize database per test
         yield client
 
 def test_database_initialization():
@@ -17,7 +22,7 @@ def test_database_initialization():
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM keys")
         count = cursor.fetchone()[0]
-        assert count == 2  # Should have two entries: one valid, one expired
+        assert count == 2  #should have two entries: one valid, one expired
 
 def test_jwks_endpoint(client):
     """Test the JWKS endpoint returns the correct key information."""
@@ -39,10 +44,16 @@ def test_auth_token_expired(client):
     response = client.post('/auth?expired=true')
     assert response.status_code == 200
     token = response.json.get("token")
-    assert token is not None  # Token should still be generated even if expired
+    assert token is not None  #token should still be generated even if expired
 
 def test_unsupported_method(client):
     """Test that an unsupported HTTP method returns a 405 error."""
-    response = client.put('/auth')  # Using PUT instead of POST
+    response = client.put('/auth')  #using PUT instead of POST
     assert response.status_code == 405
     assert response.json == {'error': 'Method not allowed'}
+
+#ChatGPT was used to ask for steps to making a test suite and to help debug
+
+#Examples of prompts used:
+# -Please explain steps to building a test suite for python code
+# -Please explain why some modules are undefined
