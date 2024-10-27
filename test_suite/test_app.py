@@ -1,7 +1,7 @@
 import pytest
 import sqlite3
 import datetime
-from app import app, DB_FILE, init_db
+from jwks_server import app, DB_FILE, init_db
 
 # Set up test client
 @pytest.fixture
